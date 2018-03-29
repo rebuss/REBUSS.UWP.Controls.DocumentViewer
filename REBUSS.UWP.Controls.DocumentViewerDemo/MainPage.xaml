@@ -1,0 +1,262 @@
+﻿<Page
+    x:Class="REBUSS.UWP.Controls.DocumentViewerDemo.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:REBUSS.UWP.Controls.DocumentViewerDemo"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:documentViewer="using:REBUSS.UWP.Controls.DocumentViewer"
+    mc:Ignorable="d">
+<Page.DataContext>
+    <local:MainPageViewModel/>
+</Page.DataContext>
+    <Grid >
+        <Grid.Resources>
+            <DataTemplate x:DataType="local:Document" x:Key="DocumentTemplate">
+                <Grid>
+                    <Image Source="{x:Bind ImageBitmap}" Width="100" Height="200" Stretch="UniformToFill"/>
+                    <Path Width="76" Height="63" Stretch="Fill" Fill="Green" 
+                          Visibility="{x:Bind IsProcessed}"
+                          Data="F1 M 23.7501,33.25L 34.8334,44.3333L 52.2499,22.1668L 56.9999,26.9168L 34.8334,53.8333L 19.0001,38L 23.7501,33.25 Z "
+                          Margin="20" 
+                          VerticalAlignment="Bottom"
+                          HorizontalAlignment="Right"/>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:DataType="local:Document" x:Key="SelectedDocumentTemplate">
+                <Image Source="{x:Bind ImageBitmap}"/>
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <documentViewer:DocumentViewer ItemsSource="{Binding Documents}" 
+                                       Grid.Row="1"
+                                       SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
+                                       ItemTemplate="{StaticResource DocumentTemplate}"
+                                       SelectedItemTemplate="{StaticResource SelectedDocumentTemplate}">
+        </documentViewer:DocumentViewer>
+
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" 
+                Grid.Row="0"
+                x:Name="button"
+                Width="300"
+                Height="100"
+                Content="Open...">
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="Click" SourceObject="{Binding ElementName=button}">
+                    <core:CallMethodAction MethodName="OpenFolder" TargetObject="{Binding}"/>
+                </core:EventTriggerBehavior>
+
+            </interactivity:Interaction.Behaviors>
+        </Button>
+
+        <!-- TODO POC 
+                <Style TargetType="ScrollViewer">
+                <Setter Property="HorizontalScrollMode" Value="Auto" />
+                <Setter Property="VerticalScrollMode" Value="Auto" />
+                <Setter Property="IsHorizontalRailEnabled" Value="True" />
+                <Setter Property="IsVerticalRailEnabled" Value="True" />
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="ZoomMode" Value="Disabled" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+                <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollViewer">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="ScrollingIndicatorStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition From="MouseIndicator" To="NoIndicator">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar"
+                                             Storyboard.TargetProperty="IndicatorMode">
+                                                        <DiscreteObjectKeyFrame KeyTime="0:0:3">
+                                                            <DiscreteObjectKeyFrame.Value>
+                                                                <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                            </DiscreteObjectKeyFrame.Value>
+                                                        </DiscreteObjectKeyFrame>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition From="TouchIndicator" To="NoIndicator">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar"
+                                             Storyboard.TargetProperty="IndicatorMode">
+                                                        <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                                                            <DiscreteObjectKeyFrame.Value>
+                                                                <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                            </DiscreteObjectKeyFrame.Value>
+                                                        </DiscreteObjectKeyFrame>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+
+                                        <VisualState x:Name="TouchIndicator">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar"
+                                           Storyboard.TargetProperty="IndicatorMode"
+                                           Duration="0">
+                                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>TouchIndicator</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="MouseIndicator">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar"
+                                           Storyboard.TargetProperty="IndicatorMode"
+                                           Duration="0">
+                                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <ScrollContentPresenter x:Name="ScrollContentPresenter"
+                              Grid.RowSpan="2"
+                              Grid.ColumnSpan="2"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Margin="{TemplateBinding Padding}" />
+                                    
+                                    <ScrollBar Grid.Row="1" x:Name="HorizontalScrollBar"
+                 IsTabStop="False"
+                 Maximum="{TemplateBinding ScrollableWidth}"
+                 Orientation="Horizontal"
+                 Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                 Value="{TemplateBinding HorizontalOffset}"
+                 ViewportSize="{TemplateBinding ViewportWidth}" />
+                                    <Button Grid.Row="0" Grid.RowSpan="2" 
+                                            HorizontalAlignment="Left" 
+                                            x:Name="ScrollLeftButton" 
+                                            Margin="0" VerticalAlignment="Stretch"
+                                            Width="50"/>
+                                    <Button Grid.Row="0" Grid.RowSpan="2" 
+                                            HorizontalAlignment="Right" 
+                                            x:Name="ScrollRightButton" 
+                                            Margin="0" VerticalAlignment="Stretch"
+                                            Width="50"/>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>-->
+
+
+        <!--<Grid.Resources>
+            <local:ToggleButtonTemplateSelector x:Key="ToggleButtonTemplateSelector">
+                <local:ToggleButtonTemplateSelector.FalseTemplate>
+                    <DataTemplate>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8FD;"/>
+                    </DataTemplate>
+                </local:ToggleButtonTemplateSelector.FalseTemplate>
+                <local:ToggleButtonTemplateSelector.TrueTemplate>
+                    <DataTemplate>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7C3;"/>
+                    </DataTemplate>
+                </local:ToggleButtonTemplateSelector.TrueTemplate>
+            </local:ToggleButtonTemplateSelector>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ToggleButton Content="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}"
+                      ContentTemplateSelector="{StaticResource ToggleButtonTemplateSelector}">
+            <ToggleButton.Transitions>
+                <TransitionCollection>
+                    <ContentThemeTransition/>
+                </TransitionCollection>
+            </ToggleButton.Transitions>
+
+        </ToggleButton>-->
+        <!--<Grid.Transform3D>
+            <media3D:PerspectiveTransform3D/>
+        </Grid.Transform3D>
+        <Grid.Resources>
+            <Storyboard x:Name="Storyboard">
+                <DoubleAnimation Storyboard.TargetName="PlaneProjection" Storyboard.TargetProperty="RotationY" From="65" To="0" Duration="0:0:0.3" />
+                <DoubleAnimation Storyboard.TargetName="PlaneProjection" Storyboard.TargetProperty="GlobalOffsetX" From="0" To="400" Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <QuadraticEase EasingMode="EaseIn"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="animatedImage" Storyboard.TargetProperty="Opacity" From="0.5" To="1" Duration="0:0:0.3"/>
+            </Storyboard>
+            <Storyboard x:Name="MainStoryboard">
+                <DoubleAnimation Storyboard.TargetName="MainPlaneProjection" Storyboard.TargetProperty="RotationY" From="180" To="145" Duration="0:0:0.3" />
+                <DoubleAnimation Storyboard.TargetName="MainPlaneProjection" Storyboard.TargetProperty="GlobalOffsetX" From="-600" To="00" Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <QuadraticEase EasingMode="EaseOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="mainAnimatedImage" Storyboard.TargetProperty="Opacity" From="1" To="0.5" Duration="0:0:0.3"/>
+            </Storyboard>
+
+            <Storyboard x:Name="StoryboardBack">
+                <DoubleAnimation Storyboard.TargetName="PlaneProjection" Storyboard.TargetProperty="RotationY" To="65" From="0" Duration="0:0:0.3" />
+                <DoubleAnimation Storyboard.TargetName="PlaneProjection" Storyboard.TargetProperty="GlobalOffsetX" To="0" From="400" Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <QuadraticEase EasingMode="EaseOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="animatedImage" Storyboard.TargetProperty="Opacity" To="0.5" From="1" Duration="0:0:0.3"/>
+            </Storyboard>
+            <Storyboard x:Name="MainStoryboardBack">
+                <DoubleAnimation Storyboard.TargetName="MainPlaneProjection" Storyboard.TargetProperty="RotationY" To="180" From="145" Duration="0:0:0.3" />
+                <DoubleAnimation Storyboard.TargetName="MainPlaneProjection" Storyboard.TargetProperty="GlobalOffsetX" To="-600" From="00" Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <QuadraticEase EasingMode="EaseIn"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="mainAnimatedImage" Storyboard.TargetProperty="Opacity" To="1" From="0.5" Duration="0:0:0.3"/>
+            </Storyboard>
+        </Grid.Resources>
+        <Button VerticalAlignment="Top" Width="200" Height="100"></Button>
+        <Image Source="ms-appx:///Resources/wood.png" x:Name="animatedImage"
+               Opacity="0.5"
+               HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Fill"
+               PointerPressed="AnimatedImage_OnPointerPressed"  Width="400" Height="500">
+            <Image.Projection>
+                <PlaneProjection RotationY="65" GlobalOffsetX="0" x:Name="PlaneProjection" CenterOfRotationX="0"/>
+            </Image.Projection>
+        </Image>
+        <Image Source="ms-appx:///Resources/materialrese.png" x:Name="mainAnimatedImage"
+               HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="None"
+               PointerPressed="MainAnimatedImage_OnPointerPressed" Width="400" Height="500">
+            <Image.Projection>
+                <PlaneProjection RotationY="180" GlobalOffsetX="600" x:Name="MainPlaneProjection" CenterOfRotationX="0"/>
+            </Image.Projection>
+        </Image>-->
+    </Grid>
+</Page>
+
+
+
+
+
+
+
